@@ -1,0 +1,28 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# VS Code
+.vscode/
+
+# Secrets
+.env
+*.env
+
+# DEM files
+*.tif
+*.tiff
+*.tar
+*.tar.gz
+*.zip
+
+# Large/raw project files
+data/*.pdf
+
+# Generated data
+data/*.csv
+
+# Generated maps
+data/*.html
