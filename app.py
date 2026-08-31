@@ -8,6 +8,7 @@ import os
 import joblib
 
 from weather import get_weather
+from online_terrain import get_online_terrain
 
 
 # ==========================================
@@ -35,101 +36,16 @@ ml_model = joblib.load(
 # ==========================================
 
 def get_terrain(latitude, longitude):
-
-    dem_files = glob.glob(
-        "data/dem*/*.tif"
-    )
-
-    for dem_file in dem_files:
-
-        try:
-
-            with rasterio.open(dem_file) as src:
-
-                bounds = src.bounds
-
-                # Check whether location is inside DEM
-                if not (
-                    bounds.left <= longitude <= bounds.right
-                    and
-                    bounds.bottom <= latitude <= bounds.top
-                ):
-                    continue
-
-                row, col = src.index(
-                    longitude,
-                    latitude
-                )
-
-                # Read small 3x3 area
-                window = rasterio.windows.Window(
-                    col - 1,
-                    row - 1,
-                    3,
-                    3
-                )
-
-                elevation = src.read(
-                    1,
-                    window=window,
-                    boundless=True,
-                    fill_value=np.nan
-                ).astype(float)
-
-                # Remove nodata
-                if src.nodata is not None:
-
-                    elevation[
-                        elevation == src.nodata
-                    ] = np.nan
-
-                center = elevation[1, 1]
-
-                if not np.isfinite(center):
-                    continue
-
-                # ==========================================
-                # Calculate slope
-                # ==========================================
-
-                lat_rad = np.radians(latitude)
-
-                dx = (
-                    src.res[0]
-                    * 111320
-                    * np.cos(lat_rad)
-                )
-
-                dy = (
-                    src.res[1]
-                    * 111320
-                )
-
-                gy, gx = np.gradient(
-                    elevation,
-                    dy,
-                    dx
-                )
-
-                slope = np.degrees(
-                    np.arctan(
-                        np.sqrt(
-                            gx[1, 1] ** 2
-                            +
-                            gy[1, 1] ** 2
-                        )
-                    )
-                )
-
-                if not np.isfinite(slope):
-                    continue
-
-                return float(center), float(slope)
-
-        except Exception:
-            continue
-
-    return None, None
+    try:
+        return get_online_terrain(
+            latitude,
+            longitude
+        )
+    except Exception as e:
+        st.error(
+            f"Unable to fetch terrain data: {e}"
+        )
+        return None, None
 
 
 # ==========================================
