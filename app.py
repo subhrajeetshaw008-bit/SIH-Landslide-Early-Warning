@@ -103,9 +103,23 @@ with col2:
 # Interactive Map
 m = folium.Map(
     location=[latitude, longitude],
-    zoom_start=8,
-    tiles="OpenStreetMap"
+    zoom_start=10,
+    tiles=None
 )
+
+folium.TileLayer(
+    "OpenStreetMap",
+    name="Street Map",
+    control=True
+).add_to(m)
+
+folium.TileLayer(
+    "OpenTopoMap",
+    name="Terrain Map",
+    control=True
+).add_to(m)
+
+folium.LayerControl().add_to(m)
 
 folium.Marker(
     [latitude, longitude],
