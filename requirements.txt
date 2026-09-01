@@ -6,3 +6,5 @@ rasterio
 joblib
 scikit-learn
 requests
+folium
+streamlit-folium
