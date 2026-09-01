@@ -10,6 +10,9 @@ import joblib
 from weather import get_weather
 from online_terrain import get_online_terrain
 
+import folium
+from streamlit_folium import st_folium
+
 
 # ==========================================
 # CONFIGURATION
@@ -97,13 +100,29 @@ with col2:
 # MAP
 # ==========================================
 
-location_data = pd.DataFrame({
-    "latitude": [latitude],
-    "longitude": [longitude]
-})
+# Interactive Map
+m = folium.Map(
+    location=[latitude, longitude],
+    zoom_start=8,
+    tiles="OpenStreetMap"
+)
 
-st.map(location_data)
+folium.Marker(
+    [latitude, longitude],
+    popup=f"""
+    Selected Location<br>
+    Latitude: {latitude:.4f}<br>
+    Longitude: {longitude:.4f}
+    """,
+    tooltip="Selected Location",
+    icon=folium.Icon(color="red", icon="info-sign")
+).add_to(m)
 
+st_folium(
+    m,
+    width=None,
+    height=450
+)
 
 # ==========================================
 # WEATHER
