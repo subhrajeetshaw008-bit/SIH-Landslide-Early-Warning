@@ -12,6 +12,7 @@ from online_terrain import get_online_terrain
 
 import folium
 from streamlit_folium import st_folium
+from utils.chat_widget import render_chat_widget
 
 
 # ==========================================
@@ -94,6 +95,8 @@ with col2:
         value=93.5,
         format="%.4f"
     )
+
+    render_chat_widget(latitude, longitude)
 
 
 # ==========================================

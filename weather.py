@@ -6,7 +6,7 @@ def get_weather(latitude, longitude):
         "https://api.open-meteo.com/v1/forecast"
         f"?latitude={latitude}"
         f"&longitude={longitude}"
-        "&current=temperature_2m,rain"
+        "&current=temperature_2m,relative_humidity_2m,rain,wind_speed_10m"
     )
 
     response = requests.get(url, timeout=10)
@@ -17,9 +17,11 @@ def get_weather(latitude, longitude):
     data = response.json()
 
     return {
-        "temperature": data["current"]["temperature_2m"],
-        "rain": data["current"]["rain"]
-    }
+    "temperature": data["current"]["temperature_2m"],
+    "humidity": data["current"]["relative_humidity_2m"],
+    "rain": data["current"]["rain"],
+    "wind_speed": data["current"]["wind_speed_10m"]
+}
 
 if __name__ == "__main__":
 
