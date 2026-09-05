@@ -100,6 +100,7 @@ st.set_page_config(
 with open("assets/styles.css") as css_file:
     st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
 
+
 latitude = st.session_state.get(
     "latitude",
     24.5
@@ -136,6 +137,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
 # =========================
 # CHAT HISTORY
 # =========================
@@ -144,7 +146,9 @@ if "messages" not in st.session_state:
 
     st.session_state.messages = []
 
-quick_prompt = None
+if "pending_prompt" not in st.session_state:
+
+    st.session_state.pending_prompt = None
 
 if not st.session_state.messages:
     st.markdown(
@@ -167,7 +171,8 @@ if not st.session_state.messages:
     for column, (label, prompt_text) in zip(prompt_columns, quick_prompts):
         with column:
             if st.button(label, key=f"assistant_quick_{label}", use_container_width=True):
-                quick_prompt = prompt_text
+                st.session_state.pending_prompt = prompt_text
+                st.rerun()
 
 # =========================
 # SHOW OLD MESSAGES
@@ -184,29 +189,11 @@ for msg in st.session_state.messages:
         )
 
 # =========================
-# USER INPUT
+# PROCESS PENDING MESSAGE
 # =========================
 
-prompt = quick_prompt
-with st.form("assistant_composer", clear_on_submit=True, border=False):
-    st.markdown("<div class='assistant-composer-anchor'></div>", unsafe_allow_html=True)
-    input_column, send_column = st.columns([8, 1.2])
-    with input_column:
-        typed_prompt = st.text_input(
-            "Message",
-            placeholder="Ask about risk, weather, terrain or safety...",
-            label_visibility="collapsed"
-        )
-    with send_column:
-        send_clicked = st.form_submit_button("Send", use_container_width=True)
-
-    if send_clicked and typed_prompt.strip():
-        prompt = typed_prompt.strip()
-
-# =========================
-# PROCESS MESSAGE
-# =========================
-
+prompt = st.session_state.pending_prompt
+st.session_state.pending_prompt = None
 if prompt:
 
     st.session_state.messages.append(
@@ -302,3 +289,15 @@ if prompt:
             "content": response
         }
     )
+
+# =========================
+# CHAT INPUT
+# =========================
+
+typed_prompt = st.chat_input(
+    "Ask about risk, weather, terrain or safety..."
+)
+
+if typed_prompt and typed_prompt.strip():
+    st.session_state.pending_prompt = typed_prompt.strip()
+    st.rerun()

@@ -3,8 +3,11 @@ pandas
 numpy
 plotly
 rasterio
-joblib
 scikit-learn
+joblib
 requests
 folium
 streamlit-folium
+mistralai
+python-dotenv
+tavily-python

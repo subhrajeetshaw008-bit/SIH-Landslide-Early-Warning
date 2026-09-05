@@ -1,9 +1,16 @@
 import joblib
+from pathlib import Path
+import streamlit as st
 
 
-model = joblib.load(
-    "landslide_baseline_model.pkl"
-)
+MODEL_PATH = Path(__file__).resolve().parents[1] / "models" / "landslide_model.pkl"
+
+@st.cache_resource(show_spinner=False)
+def load_model():
+    return joblib.load(MODEL_PATH)
+
+
+model = load_model()
 
 
 def predict_risk(

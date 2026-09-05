@@ -16,12 +16,12 @@ def ask_mistral(messages):
 
     client = Mistral(api_key=api_key)
 
-    response = client.chat.complete(
-
-        model="mistral-small-latest",
-
-        messages=messages
-
-    )
+    try:
+        response = client.chat.complete(
+            model="mistral-small-latest",
+            messages=messages
+        )
+    except Exception:
+        return "The AI assistant is temporarily unavailable. Please try again shortly or use the weather and risk tools."
 
     return response.choices[0].message.content

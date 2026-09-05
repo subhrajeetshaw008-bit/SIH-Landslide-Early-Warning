@@ -1,35 +1,39 @@
+from chatbot.mistral_client import ask_mistral
+
+
 def route_query(user_query):
 
-    query = user_query.lower().strip()
+    query = user_query.lower()
 
     # Weather Questions
+
     if any(word in query for word in [
         "weather",
         "temperature",
         "humidity",
-        "rainfall",
-        "wind speed",
-        "wind"
+        "rain"
     ]):
         return {
             "type": "weather"
         }
 
-    # Risk / Prediction Questions
+    # Risk Questions
+
     elif any(phrase in query for phrase in [
         "risk score",
-        "landslide risk",
         "risk level",
+        "landslide risk",
         "susceptibility",
         "calculate risk",
         "predict risk",
-        "risk prediction"
+        "risk prediction",
+        "current risk",
+        "how risky"
     ]):
+
         return {
             "type": "risk"
         }
-
-    # News Questions
     elif any(word in query for word in [
         "news",
         "latest",
@@ -38,10 +42,11 @@ def route_query(user_query):
         "what happened"
     ]):
         return {
-            "type": "news"
+           "type": "news"
         }
 
-    # Everything Else → Mistral
+    # Everything Else
+
     return {
         "type": "mistral"
     }
