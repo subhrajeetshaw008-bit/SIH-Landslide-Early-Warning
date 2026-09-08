@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+
 from weather import get_weather
 
 st.set_page_config(
@@ -114,3 +116,88 @@ with assessment_columns[1]:
 		st.success("No heavy rainfall detected right now.")
 	else:
 		st.info("Weather data is currently unavailable.")
+		
+st.markdown(
+    "<div class='section-kicker'>04 <span>7 Day Forecast</span></div>",
+    unsafe_allow_html=True
+)
+
+if weather and "forecast_dates" in weather:
+
+    forecast_df = pd.DataFrame({
+        "Date": weather["forecast_dates"],
+        "Max Temp (°C)": weather["forecast_temp_max"],
+        "Min Temp (°C)": weather["forecast_temp_min"],
+        "Rainfall (mm)": weather["forecast_rain"]
+    })
+
+    st.dataframe(
+        forecast_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.markdown(
+        "<div class='section-kicker'>05 <span>Forecast Trend</span></div>",
+        unsafe_allow_html=True
+    )
+
+    chart_df = forecast_df.set_index("Date")
+
+    st.line_chart(
+        chart_df[
+            [
+                "Max Temp (°C)",
+                "Min Temp (°C)"
+            ]
+        ]
+    )
+
+else:
+
+    st.info(
+        "Forecast weather data unavailable."
+    )
+
+
+st.markdown(
+    "<div class='section-kicker'>06 <span>Forecast Landslide Risk</span></div>",
+    unsafe_allow_html=True
+)
+
+if weather and "forecast_rain" in weather:
+
+    risk_rows = []
+
+    for i in range(len(weather["forecast_dates"])):
+
+        rain = weather["forecast_rain"][i]
+
+        if rain >= 100:
+            risk = "🔴 High"
+
+        elif rain >= 50:
+            risk = "🟠 Moderate"
+
+        else:
+            risk = "🟢 Low"
+
+        risk_rows.append({
+            "Date": weather["forecast_dates"][i],
+            "Forecast Rainfall (mm)": rain,
+            "Risk Level": risk
+        })
+
+    risk_df = pd.DataFrame(risk_rows)
+
+    st.dataframe(
+        risk_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+else:
+
+    st.info(
+        "Forecast risk data unavailable."
+    )

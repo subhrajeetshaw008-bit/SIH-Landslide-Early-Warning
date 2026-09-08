@@ -101,7 +101,9 @@ with map_column:
 	st.subheader("🗺️ Selected Location")
 	risk_map = folium.Map(
 		location=[selected_latitude, selected_longitude],
-		zoom_start=10
+		zoom_start=10,
+		tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+		attr="Esri World Imagery"
 	)
 	folium.Marker(
 		[selected_latitude, selected_longitude],

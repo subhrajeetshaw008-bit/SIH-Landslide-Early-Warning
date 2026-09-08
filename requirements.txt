@@ -8,6 +8,6 @@ joblib
 requests
 folium
 streamlit-folium
-mistralai
+google-genai
 python-dotenv
 tavily-python

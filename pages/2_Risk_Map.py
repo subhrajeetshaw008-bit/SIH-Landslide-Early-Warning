@@ -19,6 +19,10 @@ longitude = st.session_state.get("longitude", 93.5)
 
 st.title("🗺️ Risk Intelligence Map")
 st.caption(f"Location intelligence for {user['name']} • {latitude:.4f}, {longitude:.4f}")
+st.info(
+    "🖱️ Click anywhere on the map to update the monitored location."
+)
+
 
 weather = get_weather(latitude, longitude)
 terrain = get_terrain(latitude, longitude)
@@ -46,23 +50,65 @@ map_column, insight_column = st.columns([2.1, 1])
 
 with map_column:
 	st.subheader("Live risk location")
-	risk_map = folium.Map(location=[latitude, longitude], zoom_start=11, tiles="CartoDB positron")
-	folium.TileLayer(
+	risk_map = folium.Map(
+		location=[latitude, longitude],
+		zoom_start=11,
 		tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-		attr="Esri World Imagery",
-		name="Satellite"
-	).add_to(risk_map)
+		attr="Esri World Imagery"
+	)
+
+	if risk_score is None:
+		circle_color = "gray"
+		fill_color = "gray"
+	elif risk_score < 30:
+		circle_color = "green"
+		fill_color = "green"
+	elif risk_score < 70:
+		circle_color = "orange"
+		fill_color = "orange"
+	else:
+		circle_color = "red"
+		fill_color = "red"
+
 	folium.Circle(
-		[latitude, longitude], radius=5000, color="#315b35",
-		fill=True, fill_color="#8cae78", fill_opacity=0.18
+		[latitude, longitude],
+		radius=5000,
+		color=circle_color,
+		fill=True,
+		fill_color=fill_color,
+		fill_opacity=0.30
 	).add_to(risk_map)
+
 	folium.Marker(
 		[latitude, longitude],
 		tooltip=f"{user['name']}'s selected place",
-		popup=f"{latitude:.4f}, {longitude:.4f} | {risk_level}"
+		popup=f"{latitude:.4f}, {longitude:.4f} | {risk_level}",
+		icon=folium.Icon(
+			color=(
+				"green"
+				if risk_score is not None and risk_score < 30
+				else "orange"
+				if risk_score is not None and risk_score < 70
+				else "red"
+			)
+		)
 	).add_to(risk_map)
+
 	folium.LayerControl().add_to(risk_map)
-	st_folium(risk_map, width=None, height=560)
+
+	map_data = st_folium(
+		risk_map,
+		width=None,
+		height=560
+	)
+	if map_data and map_data.get("last_clicked"):
+		clicked_lat = map_data["last_clicked"]["lat"]
+		clicked_lon = map_data["last_clicked"]["lng"]
+
+		st.session_state["latitude"] = clicked_lat
+		st.session_state["longitude"] = clicked_lon
+
+		st.rerun()
 
 with insight_column:
 	st.subheader("Place profile")

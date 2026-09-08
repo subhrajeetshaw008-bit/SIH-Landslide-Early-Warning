@@ -1,0 +1,45 @@
+{
+  "selected_model": "RandomForest",
+  "features": [
+    "temperature",
+    "humidity",
+    "rainfall",
+    "elevation"
+  ],
+  "training_samples": 1200,
+  "data_source": "synthetic (domain-informed) - see train_model.py docstring",
+  "results": {
+    "RandomForest": {
+      "accuracy": 0.65,
+      "precision": 0.6056338028169014,
+      "recall": 0.43434343434343436,
+      "f1": 0.5058823529411764,
+      "confusion_matrix": [
+        [
+          113,
+          28
+        ],
+        [
+          56,
+          43
+        ]
+      ]
+    },
+    "LogisticRegression": {
+      "accuracy": 0.6541666666666667,
+      "precision": 0.6212121212121212,
+      "recall": 0.41414141414141414,
+      "f1": 0.49696969696969695,
+      "confusion_matrix": [
+        [
+          116,
+          25
+        ],
+        [
+          58,
+          41
+        ]
+      ]
+    }
+  }
+}
