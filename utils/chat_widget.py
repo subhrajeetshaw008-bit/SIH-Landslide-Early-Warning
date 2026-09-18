@@ -1,4 +1,3 @@
-@'
 import streamlit as st
 
 from chatbot.news_agent import news_response
@@ -78,4 +77,3 @@ def render_chat_widget(latitude, longitude):
 
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.rerun()
-'@ | Set-Content -Encoding UTF8 utils\chat_widget.py

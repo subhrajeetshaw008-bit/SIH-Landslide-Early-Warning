@@ -26,3 +26,4 @@ data/*.csv
 
 # Generated maps
 data/*.html
+.streamlit/secrets.toml

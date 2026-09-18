@@ -1,4 +1,4 @@
-from chatbot.mistral_client import ask_mistral
+from chatbot.gemini_client import ask_gemini
 
 
 def route_query(user_query):

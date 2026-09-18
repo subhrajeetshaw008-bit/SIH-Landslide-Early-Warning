@@ -234,4 +234,42 @@ if prompt:
 
         response = risk_response(
             latitude,
-            longitude
+            longitude      
+        )
+
+    # ---------------------
+    # NEWS AGENT
+    # ---------------------
+
+    elif route["type"] == "news":
+
+        response = news_response(
+            prompt
+        )
+
+    # ---------------------
+    # GENERAL / GEMINI FALLBACK
+    # ---------------------
+
+    else:
+
+        response = ask_gemini(
+            prompt
+        )
+
+    # ---------------------
+    # SHOW + STORE RESPONSE
+    # ---------------------
+
+    with st.chat_message("assistant"):
+
+        st.write(response)
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": response
+        }
+    )
+
+    st.rerun()
