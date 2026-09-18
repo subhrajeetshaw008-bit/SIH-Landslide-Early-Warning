@@ -75,7 +75,7 @@ Always prioritize public safety, factual accuracy, and clear communication.
 
 import streamlit as st
 
-from chatbot.mistral_client import ask_mistral
+from chatbot.gemini_client import ask_gemini
 
 from chatbot.router import route_query
 
@@ -235,69 +235,3 @@ if prompt:
         response = risk_response(
             latitude,
             longitude
-        )
-    #----------------------
-    # NEWS RESPONSE
-    #----------------------
-
-    elif route["type"] == "news":
-
-        response = news_response(
-            prompt
-        )
-    # ---------------------
-    # MISTRAL
-    # ---------------------
-
-    else:
-
-        mistral_messages = [
-            {
-                "role":"system",
-                "content": SYSTEM_PROMPT
-            }
-        ]
-
-        for msg in st.session_state.messages:
-
-            mistral_messages.append(
-                {
-                    "role": msg["role"],
-                    "content": msg["content"]
-                }
-            )
-
-        response = ask_mistral(
-            mistral_messages
-        )
-
-    # ---------------------
-    # SHOW RESPONSE
-    # ---------------------
-
-    with st.chat_message(
-            "assistant"
-        ):
-
-        st.write(
-            response
-        )
-
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": response
-        }
-    )
-
-# =========================
-# CHAT INPUT
-# =========================
-
-typed_prompt = st.chat_input(
-    "Ask about risk, weather, terrain or safety..."
-)
-
-if typed_prompt and typed_prompt.strip():
-    st.session_state.pending_prompt = typed_prompt.strip()
-    st.rerun()

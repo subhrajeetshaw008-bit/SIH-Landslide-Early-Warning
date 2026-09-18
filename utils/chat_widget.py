@@ -1,10 +1,11 @@
+@'
 import streamlit as st
 
 from chatbot.news_agent import news_response
 from chatbot.risk_agent import risk_response
 from chatbot.router import route_query
 from chatbot.weather_agent import weather_response
-from chatbot.mistral_client import ask_mistral
+from chatbot.gemini_client import ask_gemini
 
 
 def render_chat_widget(latitude, longitude):
@@ -15,7 +16,7 @@ def render_chat_widget(latitude, longitude):
         st.session_state.dashboard_chat_open = False
 
     launcher_label = "Close AI assistant" if st.session_state.dashboard_chat_open else "Open AI assistant"
-    if st.button("✦", key="dashboard_chat_launcher", help=launcher_label):
+    if st.button("SPARK", key="dashboard_chat_launcher", help=launcher_label):
         st.session_state.dashboard_chat_open = not st.session_state.dashboard_chat_open
         st.rerun()
 
@@ -27,7 +28,7 @@ def render_chat_widget(latitude, longitude):
             """
             <div class="dashboard-chat-popup-anchor"></div>
             <div class="dashboard-chat-header">
-                <div class="dashboard-chat-avatar">✦</div>
+                <div class="dashboard-chat-avatar">SPARK</div>
                 <div><div class="assistant-eyebrow">LANDSLIDE AI</div><h3>Field assistant</h3><p>Quick answers for your selected location.</p></div>
             </div>
             """,
@@ -73,15 +74,8 @@ def render_chat_widget(latitude, longitude):
     elif route["type"] == "news":
         response = news_response(prompt)
     else:
-        response = ask_mistral(
-            [
-                {
-                    "role": "system",
-                    "content": "You are a concise landslide safety assistant."
-                },
-                *st.session_state.messages
-            ]
-        )
+        response = ask_gemini(prompt)
 
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.rerun()
+'@ | Set-Content -Encoding UTF8 utils\chat_widget.py
