@@ -273,3 +273,12 @@ if prompt:
     )
 
     st.rerun()
+
+# =========================
+# USER INPUT
+# =========================
+
+user_input = st.chat_input("Ask about risk, weather, terrain, or safety planning...")
+if user_input:
+    st.session_state.pending_prompt = user_input
+    st.rerun()
